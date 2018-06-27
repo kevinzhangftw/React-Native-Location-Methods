@@ -37,24 +37,36 @@ const isTravelling = speed => {
   return speed <= 0 ? false : true
 }
 
+const GEOLOCATION_OPTIONS = { enableHighAccuracy: true, timeInterval: 20000, distanceInterval: 100 }
+
 export default class App extends React.Component {
-  state = {
-    locationResult: null
-  }
+  // state = {
+  //   locationResult: null
+  // }
+
+  // _getLocationAsync = async () => {
+  //   let { status } = await Permissions.askAsync(Permissions.LOCATION);
+  //   if (status !== 'granted') {
+  //   this.setState({
+  //   locationResult: 'Permission to access location was denied',
+  //   })
+  //   }
+  //   let location = await Location.getCurrentPositionAsync({})
+  //   this.setState({ locationResult: location })
+  // }
 
   componentDidMount() {
-    this._getLocationAsync()
+    Location.watchPositionAsync(GEOLOCATION_OPTIONS, this.locationChanged)
   }
 
-  _getLocationAsync = async () => {
-    let { status } = await Permissions.askAsync(Permissions.LOCATION);
-    if (status !== 'granted') {
-    this.setState({
-    locationResult: 'Permission to access location was denied',
-    })
-    }
-    let location = await Location.getCurrentPositionAsync({})
-    this.setState({ locationResult: location })
+  locationChanged = (location) => {
+    region = {
+      latitude: location.coords.latitude,
+      longitude: location.coords.longitude,
+      latitudeDelta: 0.1,
+      longitudeDelta: 0.05,
+    },
+    this.setState({location, region})
   }
 
   render() {
